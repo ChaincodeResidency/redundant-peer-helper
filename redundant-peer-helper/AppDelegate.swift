@@ -8,19 +8,37 @@
 
 import Cocoa
 
+/** Main application
+ */
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject {
+    /** Application status bar item
+    */
+    lazy fileprivate var _appStatusBarItem: AppStatusBarItem? = AppStatusBarItem()
 
-
-
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
-    }
-
-    func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
-    }
-
-
+    /** Blockchain refreshing worker
+    */
+    lazy fileprivate var _blockchainRefresher: RemoteBlockchainRefresher? = RemoteBlockchainRefresher()
 }
 
+// MARK: - NSApplicationDelegate
+extension AppDelegate: NSApplicationDelegate {
+    /** The application is done launching, first chance to initialize the application
+    */
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
+        _appStatusBarItem?.delegate = self
+        
+        _blockchainRefresher?.start()
+        
+        NSApplication.shared().windows.first?.close()
+    }
+}
+
+// MARK: - AppStatusBarItemDelegate
+extension AppDelegate: AppStatusBarItemDelegate {
+    /** Exit the application
+    */
+    func appStatusBarRequestedApplicationExit() {
+        NSApplication.shared().terminate(self)
+    }
+}

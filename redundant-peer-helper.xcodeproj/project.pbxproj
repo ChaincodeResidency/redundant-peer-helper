@@ -11,7 +11,53 @@
 		FA6B3A811D9965800022E77E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B3A801D9965800022E77E /* ViewController.swift */; };
 		FA6B3A831D9965800022E77E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA6B3A821D9965800022E77E /* Assets.xcassets */; };
 		FA6B3A861D9965800022E77E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA6B3A841D9965800022E77E /* Main.storyboard */; };
+		FAC092FA1D99AE3D001D4CBD /* AppStatusBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC092F91D99AE3D001D4CBD /* AppStatusBarItem.swift */; };
+		FAC092FC1D9AB3B5001D4CBD /* LocalCoreRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC092FB1D9AB3B5001D4CBD /* LocalCoreRequest.swift */; };
+		FAC092FE1D9AB444001D4CBD /* LocalCoreResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC092FD1D9AB444001D4CBD /* LocalCoreResponse.swift */; };
+		FAC093161D9B0F5F001D4CBD /* TestGetBestBlockHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093061D9B0ECC001D4CBD /* TestGetBestBlockHash.swift */; };
+		FAC093181D9B0F8B001D4CBD /* LocalCoreRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC092FB1D9AB3B5001D4CBD /* LocalCoreRequest.swift */; };
+		FAC0931A1D9B1282001D4CBD /* TestGetHexSerializedBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093191D9B1282001D4CBD /* TestGetHexSerializedBlock.swift */; };
+		FAC0931C1D9B247D001D4CBD /* TestGetBlockHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0931B1D9B247D001D4CBD /* TestGetBlockHash.swift */; };
+		FAC0931E1D9B2724001D4CBD /* TestGetBlockchainInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0931D1D9B2724001D4CBD /* TestGetBlockchainInfo.swift */; };
+		FAC0931F1D9B27B2001D4CBD /* LocalCoreResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC092FD1D9AB444001D4CBD /* LocalCoreResponse.swift */; };
+		FAC093211D9BFE0F001D4CBD /* RemoteBlockchainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093201D9BFE0F001D4CBD /* RemoteBlockchainService.swift */; };
+		FAC093231D9C03E3001D4CBD /* RemoteBlocksRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093221D9C03E3001D4CBD /* RemoteBlocksRefresh.swift */; };
+		FAC093251D9C0867001D4CBD /* TaskQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093241D9C0867001D4CBD /* TaskQueue.swift */; };
+		FAC093281D9C31FF001D4CBD /* HttpLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093271D9C31FF001D4CBD /* HttpLinks.swift */; };
+		FAC0932A1D9C35F2001D4CBD /* HttpStatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093291D9C35F2001D4CBD /* HttpStatusCode.swift */; };
+		FAC0932C1D9C5599001D4CBD /* HexSerializedBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0932B1D9C5599001D4CBD /* HexSerializedBlock.swift */; };
+		FAC0932D1D9C5599001D4CBD /* HexSerializedBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0932B1D9C5599001D4CBD /* HexSerializedBlock.swift */; };
+		FAC0932E1D9C55BC001D4CBD /* RemoteBlocksRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093221D9C03E3001D4CBD /* RemoteBlocksRefresh.swift */; };
+		FAC0932F1D9C55E7001D4CBD /* TaskQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093241D9C0867001D4CBD /* TaskQueue.swift */; };
+		FAC093301D9C55FA001D4CBD /* RemoteBlockchainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093201D9BFE0F001D4CBD /* RemoteBlockchainService.swift */; };
+		FAC093311D9C562F001D4CBD /* HttpStatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093291D9C35F2001D4CBD /* HttpStatusCode.swift */; };
+		FAC093321D9C5637001D4CBD /* HttpLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093271D9C31FF001D4CBD /* HttpLinks.swift */; };
+		FAC093361D9DA25F001D4CBD /* RemoteBlockchainRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093351D9DA25F001D4CBD /* RemoteBlockchainRefresher.swift */; };
+		FAC093371D9DA25F001D4CBD /* RemoteBlockchainRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093351D9DA25F001D4CBD /* RemoteBlockchainRefresher.swift */; };
+		FAC093391D9DBE6B001D4CBD /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093381D9DBE6B001D4CBD /* Errors.swift */; };
+		FAC0933A1D9DBE6B001D4CBD /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093381D9DBE6B001D4CBD /* Errors.swift */; };
+		FAC093411D9EA02C001D4CBD /* LocalCoreRpcMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093401D9EA02C001D4CBD /* LocalCoreRpcMethod.swift */; };
+		FAC093421D9EA02C001D4CBD /* LocalCoreRpcMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093401D9EA02C001D4CBD /* LocalCoreRpcMethod.swift */; };
+		FAC093441D9EA098001D4CBD /* HttpAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093431D9EA098001D4CBD /* HttpAuth.swift */; };
+		FAC093451D9EA098001D4CBD /* HttpAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093431D9EA098001D4CBD /* HttpAuth.swift */; };
+		FAC093471D9EB170001D4CBD /* HttpMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093461D9EB170001D4CBD /* HttpMethod.swift */; };
+		FAC093481D9EB170001D4CBD /* HttpMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093461D9EB170001D4CBD /* HttpMethod.swift */; };
+		FAC0934A1D9EDBD2001D4CBD /* BlockHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093491D9EDBD2001D4CBD /* BlockHash.swift */; };
+		FAC0934B1D9EDBD2001D4CBD /* BlockHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC093491D9EDBD2001D4CBD /* BlockHash.swift */; };
+		FAC0934D1D9EE0B1001D4CBD /* LocalCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0934C1D9EE0B1001D4CBD /* LocalCoreService.swift */; };
+		FAC0934E1D9EE0B1001D4CBD /* LocalCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC0934C1D9EE0B1001D4CBD /* LocalCoreService.swift */; };
+		FAC093571D9EFA02001D4CBD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6B3A801D9965800022E77E /* ViewController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FAC093111D9B0F55001D4CBD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FA6B3A731D9965800022E77E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FA6B3A7A1D9965800022E77E;
+			remoteInfo = "redundant-peer-helper";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		FA6B3A7B1D9965800022E77E /* redundant-peer-helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "redundant-peer-helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20,10 +66,40 @@
 		FA6B3A821D9965800022E77E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA6B3A851D9965800022E77E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FA6B3A871D9965800022E77E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FAC092F91D99AE3D001D4CBD /* AppStatusBarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStatusBarItem.swift; sourceTree = "<group>"; };
+		FAC092FB1D9AB3B5001D4CBD /* LocalCoreRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalCoreRequest.swift; sourceTree = "<group>"; };
+		FAC092FD1D9AB444001D4CBD /* LocalCoreResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalCoreResponse.swift; sourceTree = "<group>"; };
+		FAC093061D9B0ECC001D4CBD /* TestGetBestBlockHash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TestGetBestBlockHash.swift; path = "../redundant-peer-helper/TestGetBestBlockHash.swift"; sourceTree = "<group>"; };
+		FAC0930C1D9B0F55001D4CBD /* redundant-peer-helperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "redundant-peer-helperTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAC093101D9B0F55001D4CBD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FAC093191D9B1282001D4CBD /* TestGetHexSerializedBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestGetHexSerializedBlock.swift; sourceTree = "<group>"; };
+		FAC0931B1D9B247D001D4CBD /* TestGetBlockHash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestGetBlockHash.swift; sourceTree = "<group>"; };
+		FAC0931D1D9B2724001D4CBD /* TestGetBlockchainInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestGetBlockchainInfo.swift; sourceTree = "<group>"; };
+		FAC093201D9BFE0F001D4CBD /* RemoteBlockchainService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteBlockchainService.swift; sourceTree = "<group>"; };
+		FAC093221D9C03E3001D4CBD /* RemoteBlocksRefresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteBlocksRefresh.swift; sourceTree = "<group>"; };
+		FAC093241D9C0867001D4CBD /* TaskQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskQueue.swift; sourceTree = "<group>"; };
+		FAC093261D9C09B7001D4CBD /* TestPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = TestPlayground.playground; sourceTree = "<group>"; };
+		FAC093271D9C31FF001D4CBD /* HttpLinks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpLinks.swift; sourceTree = "<group>"; };
+		FAC093291D9C35F2001D4CBD /* HttpStatusCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpStatusCode.swift; sourceTree = "<group>"; };
+		FAC0932B1D9C5599001D4CBD /* HexSerializedBlock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HexSerializedBlock.swift; sourceTree = "<group>"; };
+		FAC093351D9DA25F001D4CBD /* RemoteBlockchainRefresher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteBlockchainRefresher.swift; sourceTree = "<group>"; };
+		FAC093381D9DBE6B001D4CBD /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		FAC093401D9EA02C001D4CBD /* LocalCoreRpcMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalCoreRpcMethod.swift; sourceTree = "<group>"; };
+		FAC093431D9EA098001D4CBD /* HttpAuth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpAuth.swift; sourceTree = "<group>"; };
+		FAC093461D9EB170001D4CBD /* HttpMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpMethod.swift; sourceTree = "<group>"; };
+		FAC093491D9EDBD2001D4CBD /* BlockHash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlockHash.swift; sourceTree = "<group>"; };
+		FAC0934C1D9EE0B1001D4CBD /* LocalCoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalCoreService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		FA6B3A781D9965800022E77E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAC093091D9B0F55001D4CBD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -37,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				FA6B3A7D1D9965800022E77E /* redundant-peer-helper */,
+				FAC0930D1D9B0F55001D4CBD /* redundant-peer-helperTests */,
 				FA6B3A7C1D9965800022E77E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -45,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				FA6B3A7B1D9965800022E77E /* redundant-peer-helper.app */,
+				FAC0930C1D9B0F55001D4CBD /* redundant-peer-helperTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,12 +131,73 @@
 			isa = PBXGroup;
 			children = (
 				FA6B3A7E1D9965800022E77E /* AppDelegate.swift */,
-				FA6B3A801D9965800022E77E /* ViewController.swift */,
 				FA6B3A821D9965800022E77E /* Assets.xcassets */,
-				FA6B3A841D9965800022E77E /* Main.storyboard */,
+				FAC0933C1D9DBE89001D4CBD /* Blockchain */,
+				FAC093381D9DBE6B001D4CBD /* Errors.swift */,
 				FA6B3A871D9965800022E77E /* Info.plist */,
+				FAC0933B1D9DBE77001D4CBD /* Interface */,
+				FA6B3A841D9965800022E77E /* Main.storyboard */,
+				FAC093341D9C7820001D4CBD /* Modules */,
+				FAC093331D9C77D7001D4CBD /* Networking */,
+				FAC093261D9C09B7001D4CBD /* TestPlayground.playground */,
+				FA6B3A801D9965800022E77E /* ViewController.swift */,
 			);
 			path = "redundant-peer-helper";
+			sourceTree = "<group>";
+		};
+		FAC0930D1D9B0F55001D4CBD /* redundant-peer-helperTests */ = {
+			isa = PBXGroup;
+			children = (
+				FAC093101D9B0F55001D4CBD /* Info.plist */,
+				FAC093061D9B0ECC001D4CBD /* TestGetBestBlockHash.swift */,
+				FAC0931D1D9B2724001D4CBD /* TestGetBlockchainInfo.swift */,
+				FAC0931B1D9B247D001D4CBD /* TestGetBlockHash.swift */,
+				FAC093191D9B1282001D4CBD /* TestGetHexSerializedBlock.swift */,
+			);
+			path = "redundant-peer-helperTests";
+			sourceTree = "<group>";
+		};
+		FAC093331D9C77D7001D4CBD /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				FAC093431D9EA098001D4CBD /* HttpAuth.swift */,
+				FAC093271D9C31FF001D4CBD /* HttpLinks.swift */,
+				FAC093461D9EB170001D4CBD /* HttpMethod.swift */,
+				FAC093291D9C35F2001D4CBD /* HttpStatusCode.swift */,
+			);
+			name = Networking;
+			sourceTree = "<group>";
+		};
+		FAC093341D9C7820001D4CBD /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				FAC093241D9C0867001D4CBD /* TaskQueue.swift */,
+			);
+			name = Modules;
+			sourceTree = "<group>";
+		};
+		FAC0933B1D9DBE77001D4CBD /* Interface */ = {
+			isa = PBXGroup;
+			children = (
+				FAC092F91D99AE3D001D4CBD /* AppStatusBarItem.swift */,
+			);
+			name = Interface;
+			sourceTree = "<group>";
+		};
+		FAC0933C1D9DBE89001D4CBD /* Blockchain */ = {
+			isa = PBXGroup;
+			children = (
+				FAC093491D9EDBD2001D4CBD /* BlockHash.swift */,
+				FAC0932B1D9C5599001D4CBD /* HexSerializedBlock.swift */,
+				FAC092FB1D9AB3B5001D4CBD /* LocalCoreRequest.swift */,
+				FAC092FD1D9AB444001D4CBD /* LocalCoreResponse.swift */,
+				FAC093401D9EA02C001D4CBD /* LocalCoreRpcMethod.swift */,
+				FAC0934C1D9EE0B1001D4CBD /* LocalCoreService.swift */,
+				FAC093351D9DA25F001D4CBD /* RemoteBlockchainRefresher.swift */,
+				FAC093201D9BFE0F001D4CBD /* RemoteBlockchainService.swift */,
+				FAC093221D9C03E3001D4CBD /* RemoteBlocksRefresh.swift */,
+			);
+			name = Blockchain;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -81,6 +220,24 @@
 			productReference = FA6B3A7B1D9965800022E77E /* redundant-peer-helper.app */;
 			productType = "com.apple.product-type.application";
 		};
+		FAC0930B1D9B0F55001D4CBD /* redundant-peer-helperTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAC093131D9B0F55001D4CBD /* Build configuration list for PBXNativeTarget "redundant-peer-helperTests" */;
+			buildPhases = (
+				FAC093081D9B0F55001D4CBD /* Sources */,
+				FAC093091D9B0F55001D4CBD /* Frameworks */,
+				FAC0930A1D9B0F55001D4CBD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FAC093121D9B0F55001D4CBD /* PBXTargetDependency */,
+			);
+			name = "redundant-peer-helperTests";
+			productName = "redundant-peer-helperTests";
+			productReference = FAC0930C1D9B0F55001D4CBD /* redundant-peer-helperTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -95,6 +252,12 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = 726K4AHK5D;
 						ProvisioningStyle = Automatic;
+					};
+					FAC0930B1D9B0F55001D4CBD = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 726K4AHK5D;
+						ProvisioningStyle = Automatic;
+						TestTargetID = FA6B3A7A1D9965800022E77E;
 					};
 				};
 			};
@@ -112,6 +275,7 @@
 			projectRoot = "";
 			targets = (
 				FA6B3A7A1D9965800022E77E /* redundant-peer-helper */,
+				FAC0930B1D9B0F55001D4CBD /* redundant-peer-helperTests */,
 			);
 		};
 /* End PBXProject section */
@@ -126,6 +290,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FAC0930A1D9B0F55001D4CBD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -133,12 +304,63 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAC093231D9C03E3001D4CBD /* RemoteBlocksRefresh.swift in Sources */,
 				FA6B3A811D9965800022E77E /* ViewController.swift in Sources */,
+				FAC093251D9C0867001D4CBD /* TaskQueue.swift in Sources */,
+				FAC092FE1D9AB444001D4CBD /* LocalCoreResponse.swift in Sources */,
+				FAC0932A1D9C35F2001D4CBD /* HttpStatusCode.swift in Sources */,
+				FAC093411D9EA02C001D4CBD /* LocalCoreRpcMethod.swift in Sources */,
+				FAC092FA1D99AE3D001D4CBD /* AppStatusBarItem.swift in Sources */,
+				FAC093361D9DA25F001D4CBD /* RemoteBlockchainRefresher.swift in Sources */,
+				FAC093391D9DBE6B001D4CBD /* Errors.swift in Sources */,
+				FAC0934A1D9EDBD2001D4CBD /* BlockHash.swift in Sources */,
+				FAC0934D1D9EE0B1001D4CBD /* LocalCoreService.swift in Sources */,
+				FAC092FC1D9AB3B5001D4CBD /* LocalCoreRequest.swift in Sources */,
 				FA6B3A7F1D9965800022E77E /* AppDelegate.swift in Sources */,
+				FAC093281D9C31FF001D4CBD /* HttpLinks.swift in Sources */,
+				FAC093471D9EB170001D4CBD /* HttpMethod.swift in Sources */,
+				FAC093211D9BFE0F001D4CBD /* RemoteBlockchainService.swift in Sources */,
+				FAC093441D9EA098001D4CBD /* HttpAuth.swift in Sources */,
+				FAC0932C1D9C5599001D4CBD /* HexSerializedBlock.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAC093081D9B0F55001D4CBD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAC093421D9EA02C001D4CBD /* LocalCoreRpcMethod.swift in Sources */,
+				FAC093311D9C562F001D4CBD /* HttpStatusCode.swift in Sources */,
+				FAC0934E1D9EE0B1001D4CBD /* LocalCoreService.swift in Sources */,
+				FAC0931E1D9B2724001D4CBD /* TestGetBlockchainInfo.swift in Sources */,
+				FAC0931C1D9B247D001D4CBD /* TestGetBlockHash.swift in Sources */,
+				FAC093181D9B0F8B001D4CBD /* LocalCoreRequest.swift in Sources */,
+				FAC0931F1D9B27B2001D4CBD /* LocalCoreResponse.swift in Sources */,
+				FAC0932F1D9C55E7001D4CBD /* TaskQueue.swift in Sources */,
+				FAC0933A1D9DBE6B001D4CBD /* Errors.swift in Sources */,
+				FAC093481D9EB170001D4CBD /* HttpMethod.swift in Sources */,
+				FAC093571D9EFA02001D4CBD /* ViewController.swift in Sources */,
+				FAC093371D9DA25F001D4CBD /* RemoteBlockchainRefresher.swift in Sources */,
+				FAC0932D1D9C5599001D4CBD /* HexSerializedBlock.swift in Sources */,
+				FAC093321D9C5637001D4CBD /* HttpLinks.swift in Sources */,
+				FAC093451D9EA098001D4CBD /* HttpAuth.swift in Sources */,
+				FAC0934B1D9EDBD2001D4CBD /* BlockHash.swift in Sources */,
+				FAC093161D9B0F5F001D4CBD /* TestGetBestBlockHash.swift in Sources */,
+				FAC093301D9C55FA001D4CBD /* RemoteBlockchainService.swift in Sources */,
+				FAC0931A1D9B1282001D4CBD /* TestGetHexSerializedBlock.swift in Sources */,
+				FAC0932E1D9C55BC001D4CBD /* RemoteBlocksRefresh.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FAC093121D9B0F55001D4CBD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FA6B3A7A1D9965800022E77E /* redundant-peer-helper */;
+			targetProxy = FAC093111D9B0F55001D4CBD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		FA6B3A841D9965800022E77E /* Main.storyboard */ = {
@@ -270,6 +492,36 @@
 			};
 			name = Release;
 		};
+		FAC093141D9B0F55001D4CBD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 726K4AHK5D;
+				INFOPLIST_FILE = "redundant-peer-helperTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "adylitica.redundant-peer-helperTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/redundant-peer-helper.app/Contents/MacOS/redundant-peer-helper";
+			};
+			name = Debug;
+		};
+		FAC093151D9B0F55001D4CBD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 726K4AHK5D;
+				INFOPLIST_FILE = "redundant-peer-helperTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "adylitica.redundant-peer-helperTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/redundant-peer-helper.app/Contents/MacOS/redundant-peer-helper";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -287,6 +539,15 @@
 			buildConfigurations = (
 				FA6B3A8B1D9965800022E77E /* Debug */,
 				FA6B3A8C1D9965800022E77E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAC093131D9B0F55001D4CBD /* Build configuration list for PBXNativeTarget "redundant-peer-helperTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAC093141D9B0F55001D4CBD /* Debug */,
+				FAC093151D9B0F55001D4CBD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
