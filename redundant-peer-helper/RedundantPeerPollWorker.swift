@@ -1,5 +1,5 @@
 //
-//  RemoteBlockchainRefresher.swift
+//  RedundantPeerPollWorker.swift
 //  redundant-peer-helper
 //
 //  Created by Alex Bosworth on 9/29/16.
@@ -8,14 +8,14 @@
 
 import Foundation
 
-/** Refresh from remote blockchains
+/** Refresh from remote blockchain data
  
  FIXME: - exponential timer backoff when errors of failures are encountered
  */
-class RemoteBlockchainRefresher {
+class RedundantPeerPollWorker {
     /** Block refresh continuation url
      */
-    private var _blockRefreshUrl: URL?
+    lazy private var _blockRefreshUrls: [RedundantPeer: URL] = [:]
     
     /** Number of seconds to wait before polling
     */
@@ -24,10 +24,20 @@ class RemoteBlockchainRefresher {
     /** Run a block refresh
      */
     @objc func refreshBlocks() {
-        RemoteBlocksRefresh.importBlocks(fromUrl: _blockRefreshUrl) { [weak self] err, continuationUrl in
+        Configuration.savedRedundantPeers.forEach(_refreshAndImportBlocks)
+    }
+
+    /** Trigger a pull from a redundant peer
+    */
+    private func _refreshAndImportBlocks(fromRedundantPeer peer: RedundantPeer) {
+        let url = _blockRefreshUrls[peer] ?? nil
+        
+        RedundantPeerRefresh.importBlocks(fromUrl: url, redundantPeer: peer) { [weak self] err, continuationUrl in
             if let err = err { return log(err: err) }
-            
-            self?._blockRefreshUrl = continuationUrl
+
+            guard let continuationUrl = continuationUrl else { return }
+
+            self?._blockRefreshUrls[peer] = continuationUrl
         }
     }
 

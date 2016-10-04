@@ -8,6 +8,8 @@
 
 import Foundation
 
+/** HTTP method
+ */
 enum HttpMethod: String {
     case post = "POST"
 

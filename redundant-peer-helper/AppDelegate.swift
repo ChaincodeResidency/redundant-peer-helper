@@ -18,7 +18,7 @@ class AppDelegate: NSObject {
 
     /** Blockchain refreshing worker
     */
-    lazy fileprivate var _blockchainRefresher: RemoteBlockchainRefresher? = RemoteBlockchainRefresher()
+    lazy fileprivate var _redundantPeerPollWorker: RedundantPeerPollWorker? = RedundantPeerPollWorker()
 }
 
 // MARK: - NSApplicationDelegate
@@ -28,9 +28,9 @@ extension AppDelegate: NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         _appStatusBarItem?.delegate = self
         
-        _blockchainRefresher?.start()
-        
-        NSApplication.shared().windows.first?.close()
+        _redundantPeerPollWorker?.start()
+  
+        NSApplication.shared().windows.first?.title = "RedundantPeer"
     }
 }
 

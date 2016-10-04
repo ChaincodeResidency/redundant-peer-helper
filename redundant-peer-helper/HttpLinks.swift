@@ -11,37 +11,23 @@ import Foundation
 /** Get formatted links from links header
  */
 struct HttpLinks {
-    /** Current link
-    */
-    let current: String?
+    // MARK: - Init
     
-    /** Next link
+    /** Derive links from link header string value
     */
-    let next: String?
-    
-    /** Derive links from url response
-    */
-    init?(fromUrlResponse: URLResponse?) {
-        guard let headers = (fromUrlResponse as? HTTPURLResponse)?.allHeaderFields as? [String: String] else {
-            return nil
-        }
+    init?(fromLinkHeaderValue: String) {
+        guard !fromLinkHeaderValue.isEmpty else { return nil }
         
-        guard let links = (headers["Link"] ?? headers["link"]) as String?, !links.isEmpty else { return nil }
-
         let linkPattern = "rel=\\\"?([^\\\"]+)\\\"?"
         
         guard let relRegex = try? NSRegularExpression(pattern: linkPattern, options: .caseInsensitive) else {
             return nil
         }
         
+        let charactersToTrim = CharacterSet.whitespaces.union(CharacterSet(charactersIn: "<>"))
         var parsedLinks = [String: String]()
-        let trimChars = NSMutableCharacterSet.whitespace()
         
-        trimChars.addCharacters(in: "<>")
-        
-        let charactersToTrim = trimChars as CharacterSet
-        
-        links.components(separatedBy: ",").forEach { link in
+        fromLinkHeaderValue.components(separatedBy: ",").forEach { link in
             guard let semicolonPosition = link.range(of: ";") else { return }
             
             let target = link
@@ -64,4 +50,29 @@ struct HttpLinks {
         current = parsedLinks["current"]
         next = parsedLinks["next"]
     }
+    
+    /** Derive links from url response
+     */
+    init?(fromUrlResponse: URLResponse?) {
+        guard
+            let headers = (fromUrlResponse as? HTTPURLResponse)?.allHeaderFields as? [String: String],
+            let links = (headers["Link"] ?? headers["link"]) as String?,
+            let httpLinks = type(of: self).init(fromLinkHeaderValue: links)
+            else
+        {
+            return nil
+        }
+
+        self = httpLinks
+    }
+
+    // MARK: - Properties
+    
+    /** Current link
+    */
+    let current: String?
+    
+    /** Next link
+    */
+    let next: String?
 }

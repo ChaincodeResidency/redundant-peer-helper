@@ -1,25 +1,90 @@
 //
-//  RedundantPeerRequest.swift
+//  RedundantPeer.swift
 //  redundant-peer-helper
 //
-//  Created by Alex Bosworth on 9/28/16.
+//  Created by Alex Bosworth on 10/4/16.
 //  Copyright © 2016 Adylitica. All rights reserved.
 //
 
 import Foundation
 
-/** Remote Blockchain Service
+/** Redundant peer service
  */
-struct RemoteBlockchainService {
-    // MARK: - Chain Mismatch
+class RedundantPeer: BlockchainDataSource {
+    // MARK: - Properties
     
+    /** Address
+     */
+    let address: String
+    
+    /** Determine when this node was first connected
+     */
+    let connectedSince: Date?
+    
+    /** Service type
+     */
+    let service: BlockchainDataService
+    
+    /** Service url
+     */
+    let serviceUrl: URL
+    
+    // MARK: - Init
+    
+    /** Create with an address
+     */
+    init?(withAddress: String) {
+        guard let url = URL(string: withAddress) else { return nil }
+        
+        address = withAddress
+        
+        connectedSince = Date()
+        
+        service = .redundantPeer
+        
+        serviceUrl = url
+    }
+}
+
+// MARK: - Errors
+
+// MARK: - Errors
+
+/** Request error
+ */
+enum RedundantPeerRequestError: Error {
+    case chainMismatch
+    case expectedLinkHeader
+    case expectedRecoveryData
+    case expectedSerializedBlocks
+    case missingStatusCode
+    case unexpectedStatusCode
+}
+
+// MARK: - Equatable
+extension RedundantPeer: Equatable {}
+
+/** Define equality between redundant peers by their URL
+ */
+func ==(lhs: RedundantPeer, rhs: RedundantPeer) -> Bool {
+    return lhs.address == rhs.address
+}
+
+// MARK: - Hashable
+extension RedundantPeer: Hashable {
+    /** Unique value for the light node
+     */
+    var hashValue: Int { return address.hashValue }
+}
+
+// MARK: - Chain Mismatch Resolution
+extension RedundantPeer {
     /** Get a recovery url from get newer blocks response data
      */
-    private static func _getRecoveryUrl(
-        fromResponseData data: Data?,
-        cbk: @escaping (_ err: Error?, _ url: URL?) -> ())
-    {
-        let reqErr: (RequestError) -> () = { cbk($0, nil) }
+    fileprivate func _getRecoveryUrl(fromResponseData data: Data?, cbk: @escaping (_ err: Error?, _ url: URL?) -> ()) {
+        let hasErr: (Error) -> () = { cbk($0, nil) }
+        
+        let reqErr: (RedundantPeerRequestError) -> () = { hasErr($0) }
         
         guard let recoveryData = data else { return reqErr(.expectedRecoveryData) }
         
@@ -29,7 +94,7 @@ struct RemoteBlockchainService {
             recoveryJson = try JSONSerialization.jsonObject(with: recoveryData, options: .allowFragments)
         }
         catch let err {
-            return cbk(err, nil)
+            return hasErr(err)
         }
         
         guard let hashes = ((recoveryJson as? [String: Any])?["error"] as? [String: Any])?["hashes"] as? [String] else {
@@ -40,39 +105,28 @@ struct RemoteBlockchainService {
         
         guard !blockHashes.isEmpty else { return reqErr(.expectedRecoveryData) }
         
-        RemoteBlocksRefresh.getRecoveryUrl(fromBlockHashes: blockHashes) { err, url in
-            if let err = err { return cbk(err, nil) }
+        RedundantPeerRefresh.getRecoveryUrl(fromBlockHashes: blockHashes, forRedundantPeer: self) { err, url in
+            if let err = err { return hasErr(err) }
             
             cbk(nil, url?.asUrl)
         }
     }
-    
-    // MARK: - Errors
+}
 
-    /** Request error
+// MARK: - Getting Blocks
+extension RedundantPeer {
+    /** Pull newer blocks
      */
-    enum RequestError: Error {
-        case chainMismatch
-        case expectedLinkHeader
-        case expectedRecoveryData
-        case expectedSerializedBlocks
-        case missingStatusCode
-        case unexpectedStatusCode
-    }
-    
-    // MARK: - Refreshing
-    
-    /** Execute request
-     */
-    static func getNewerBlocks(
+    func getNewerBlocks(
         fromUrl url: URL,
         cbk: @escaping (_ err: Error?, _ blocks: [HexSerializedBlock]?, _ continuation: URL?) -> ())
     {
         let gotBlocks: ([HexSerializedBlock]?, _ continuation: URL) -> () = { cbk(nil, $0, $1) }
         let hasErr: (Error?) -> () = { cbk($0, nil, nil) }
-        let reqErr: (RequestError) -> () = { hasErr($0) }
         
-        let task = URLSession.shared.dataTask(with: url) { responseData, response, err in
+        let reqErr: (RedundantPeerRequestError) -> () = { hasErr($0) }
+        
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, err in
             if let err = err { hasErr(err) }
             
             guard let statusCode = HttpStatusCode(fromUrlResponse: response) else {
@@ -80,11 +134,13 @@ struct RemoteBlockchainService {
             }
             
             switch statusCode {
+            // When there are no newer blocks, just retry later with the same URL
             case .noContent:
-                return gotBlocks(nil, url)
+                gotBlocks(nil, url)
                 
+            // The requested block hash was unknown by the remote service because of a chain mismatch
             case .notFound:
-                return RemoteBlockchainService._getRecoveryUrl(fromResponseData: responseData) { err, url in
+                self?._getRecoveryUrl(fromResponseData: data) { err, url in
                     if let err = err { return hasErr(err) }
                     
                     guard let url = url else { return reqErr(.expectedRecoveryData) }
@@ -92,6 +148,7 @@ struct RemoteBlockchainService {
                     gotBlocks(nil, url)
                 }
                 
+            // New blocks were found
             case .ok:
                 guard
                     let links = HttpLinks(fromUrlResponse: response),
@@ -103,7 +160,7 @@ struct RemoteBlockchainService {
                 }
                 
                 guard
-                    let blocksData = responseData,
+                    let blocksData = data,
                     let blocksJson = try? JSONSerialization.jsonObject(with: blocksData, options: .allowFragments),
                     let blockStrings = blocksJson as? [String],
                     !blockStrings.isEmpty

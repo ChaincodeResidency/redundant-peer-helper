@@ -9,6 +9,9 @@
 import Foundation
 
 /** Make a request to local core
+ 
+    FIXME: - make the core URL configurable
+    FIXME: - make auth / bitcoin conf file configurable
  */
 struct LocalCoreRequest {
     // MARK: - Properties

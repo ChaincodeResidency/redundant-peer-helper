@@ -88,6 +88,19 @@ class AppStatusBarItem: NSObject {
 
 // MARK: - NSMenuDelegate
 extension AppStatusBarItem: NSMenuDelegate {
+    private func _peerCountDisplayString(forCount: Int) -> String {
+        let template = "%@ connections to the Bitcoin network."
+        
+        let numberFormatter = NumberFormatter()
+        
+        numberFormatter.locale = .current
+        numberFormatter.numberStyle = .none
+        
+        let displayNumber = numberFormatter.string(from: NSNumber(value: forCount)) ?? String()
+        
+        return NSString(format: NSLocalizedString(template, comment: String()) as NSString, displayNumber) as String
+    }
+    
     /** Update the peer info item
     */
     private func _updatePeerCount() {
@@ -97,7 +110,9 @@ extension AppStatusBarItem: NSMenuDelegate {
                 log(err: err)
                 
             case .receivedPeerInfo(let peerInfo):
-                self?._connectionsMenuItem.title = String(peerInfo.peerCount) + " Connections to the Bitcoin Network"
+                guard let peerCount = self?._peerCountDisplayString(forCount: peerInfo.peers.count) else { break }
+                
+                self?._connectionsMenuItem.title = peerCount
             }
         }
     }

@@ -11,6 +11,10 @@ import Foundation
 /** Core RPC Methods
  */
 enum LocalCoreRpcMethod {
+    /** Ban connections to a peer
+    */
+    case banPeer(withAddress: IpAddress, duration: TimeInterval?)
+    
     /** Determine a fee given max blocks to wait
      */
     case estimateFee(givenMaxBlocksToWait: Int)
@@ -49,6 +53,9 @@ enum LocalCoreRpcMethod {
         let params: [AnyObject]
         
         switch self {
+        case .banPeer(withAddress: let address, duration: let duration):
+            params = [address.stringValue as NSString, "add" as NSString, NSNumber(value: duration ?? Double())]
+            
         case .estimateFee(let maxBlockCount):
             params = [NSNumber(value: maxBlockCount)]
             
@@ -75,6 +82,9 @@ enum LocalCoreRpcMethod {
      */
     var rpcName: String {
         switch self {
+        case .banPeer( _, _):
+            return "setban"
+            
         case .estimateFee( _):
             return "estimatefee"
             

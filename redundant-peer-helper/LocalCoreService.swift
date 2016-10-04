@@ -38,10 +38,10 @@ extension LocalCoreService {
     static func consume(hexSerializedBlocks: [HexSerializedBlock], cbk: @escaping (ServiceResult) -> ()) {
         let queue = TaskQueue()
         
-        let hasErr: (Error) -> () = { [weak queue] in
+        let hasErr: (Error) -> () = { [weak queue] err in
             queue?.cancel()
 
-            cbk(.encounteredError($0))
+            cbk(.encounteredError(err))
         }
         
         hexSerializedBlocks.forEach { block in
@@ -60,6 +60,52 @@ extension LocalCoreService {
     }
 }
 
+// MARK: - Get Blockchain Info
+extension LocalCoreService {
+    /** Response from get blockchain info
+     */
+    struct BlockchainInfo {
+        /** Current best block hash
+         */
+        let bestBlockHash: String
+        
+        /** Current best blockchain height
+         */
+        let currentHeight: Int
+        
+        /** Pruned height if applicable
+         */
+        let pruneHeight: Int?
+        
+        /** Create with properties
+         */
+        init(bestBlockHash: String, currentHeight: Int, pruneHeight: Int?) {
+            self.bestBlockHash = bestBlockHash
+            self.currentHeight = currentHeight
+            self.pruneHeight = pruneHeight
+        }
+        
+        /** Put together a blockchain info response from a raw JSON representation
+         */
+        init?(fromJsonDictionary: NSDictionary?) {
+            guard
+                let jsonDict = fromJsonDictionary,
+                let currentHeight = jsonDict["blocks"] as? NSNumber,
+                let bestBlockHash = jsonDict["bestblockhash"] as? NSString
+                else
+            {
+                return nil
+            }
+            
+            self = type(of: self).init(
+                bestBlockHash: bestBlockHash as String,
+                currentHeight: currentHeight.intValue,
+                pruneHeight: (jsonDict["pruneheight"] as? NSNumber)?.intValue
+            )
+        }
+    }
+}
+
 // MARK: - Get Peer Info
 extension LocalCoreService {
     /** Peer Info Data
@@ -67,22 +113,44 @@ extension LocalCoreService {
     struct PeerInfo {
         /** Connected peer
          */
-        private struct Peer {}
+        struct Peer: BlockchainDataSource {
+            /** Address
+            */
+            let address: String
+            
+            /** Determine when this node was first connected
+            */
+            let connectedSince: Date?
+            
+            /** Service type
+            */
+            let service: BlockchainDataService
+            
+            /** Create from JSON data
+            */
+            init(fromJson: [String: Any]?) {
+                service = BlockchainDataService(fromUserAgentString: fromJson?["subver"] as? String ?? String())
+
+                address = "bitcoin://" + (fromJson?["addr"] as? String ?? "unknown")
+                
+                if let firstConnected = (fromJson?["conntime"] as? NSNumber)?.doubleValue {
+                    connectedSince = Date(timeIntervalSince1970: firstConnected)
+                } else {
+                    connectedSince = nil
+                }
+            }
+        }
         
         /** Peers represented in the peer info response
          */
-        private let _peers: [Peer]
-        
-        /** Number of peers connected
-         */
-        var peerCount: Int { return _peers.count }
+        let peers: [Peer]
         
         /** Put together a peer info response from a raw JSON representation
          */
         init?(fromJsonArray: NSArray?) {
             guard let jsonArray = fromJsonArray else { return nil }
             
-            _peers = jsonArray.map { _ in Peer() }
+            peers = jsonArray.map { return Peer(fromJson: $0 as? [String: Any]) }
         }
     }
 

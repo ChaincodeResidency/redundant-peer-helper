@@ -1,5 +1,5 @@
 //
-//  RemoteBlocksRefresh.swift
+//  RedundantPeerRefresh.swift
 //  redundant-peer-helper
 //
 //  Created by Alex Bosworth on 9/28/16.
@@ -10,7 +10,7 @@ import Foundation
 
 /** Refresh blocks
  */
-struct RemoteBlocksRefresh {
+struct RedundantPeerRefresh {
     // MARK: - Errors
     
     /** Block refresh operation error
@@ -29,40 +29,36 @@ struct RemoteBlocksRefresh {
     struct RefreshUrl {
         /** Service Url
         */
-        private static let _baseUrl = URL(string: "https://bitcoin-light-cache.herokuapp.com")
+        private let _baseUrl: URL
         
         /** Starting block hash to request blocks after
         */
         private let _bestBlockHash: BlockHash
         
-        /** Page limit
-        */
-        private static let _defaultPageLimit = 5
-        
-        /** Max number of blocks to get in a refresh page
-        */
-        private let _resultPageLimit: Int
-        
         /** Create a refresh url with a block hash
         */
-        init(withHash: BlockHash) {
+        init(withHash: BlockHash, baseUrl: URL) {
+            _baseUrl = baseUrl
+            
             _bestBlockHash = withHash
-
-            _resultPageLimit = type(of: self)._defaultPageLimit
         }
 
         /** As URL format
         */
         var asUrl: URL? {
-            let path = "/v0/blocks/after/" + _bestBlockHash.asString + "/?limit=" + String(_resultPageLimit)
+            let path = "/v0/blocks/after/" + _bestBlockHash.asString + "/"
             
-            return URL(string: path, relativeTo: type(of: self)._baseUrl)
+            return URL(string: path, relativeTo: _baseUrl)
         }
     }
     
     /** Get a recovery url from block hashes to try
     */
-    static func getRecoveryUrl(fromBlockHashes: [BlockHash], cbk: @escaping (_ err: Error?, _ url: RefreshUrl?) -> ()) {
+    static func getRecoveryUrl(
+        fromBlockHashes: [BlockHash],
+        forRedundantPeer: RedundantPeer,
+        cbk: @escaping (_ err: Error?, _ url: RefreshUrl?) -> ())
+    {
         let queue = TaskQueue()
 
         let hasErr: (Error) -> () = { [weak queue] in queue?.cancel(); cbk($0, nil) }
@@ -75,7 +71,7 @@ struct RemoteBlocksRefresh {
 
                     guard let _ = data else { return go_on(nil) }
                     
-                    gotUrl(RefreshUrl(withHash: hash))
+                    gotUrl(RefreshUrl(withHash: hash, baseUrl: forRedundantPeer.serviceUrl))
                 }
             }
         }
@@ -89,11 +85,17 @@ struct RemoteBlocksRefresh {
     
     /** Execute refresh
     */
-    static func importBlocks(fromUrl url: URL?, cbk: @escaping (Error?, _ continuationUrl: URL?) -> ()) {
+    static func importBlocks(
+        fromUrl url: URL?,
+        redundantPeer peer: RedundantPeer,
+        cbk: @escaping (Error?, _ continuationUrl: URL?) -> ())
+    {
         let queue = TaskQueue()
         
         let hasErr: (Error?) -> () = { [weak queue] err in queue?.cancel(); cbk(err, nil) }
 
+        let hasRefreshErr: (RefreshError) -> () = { hasErr($0) }
+        
         var continuationUrl: URL?
         
         // Figure out which url to refresh from
@@ -104,23 +106,23 @@ struct RemoteBlocksRefresh {
                 if let err = err { return hasErr(err) }
 
                 guard let bestBlockHash = BlockHash(forString: bestBlockHashData as? String) else {
-                    return hasErr(RefreshError.expectedBestBlockHash)
+                    return hasRefreshErr(.expectedBestBlockHash)
                 }
                 
-                go_on(RefreshUrl(withHash: bestBlockHash).asUrl)
+                go_on(RefreshUrl(withHash: bestBlockHash, baseUrl: url ?? peer.serviceUrl).asUrl)
             }
         }
 
         // Pull in newer blocks
         queue.tasks += { url, go_on in
-            guard let url = url as? URL else { return hasErr(RefreshError.expectedRefreshUrl) }
+            guard let url = url as? URL else { return hasRefreshErr(.expectedRefreshUrl) }
             
-            RemoteBlockchainService.getNewerBlocks(fromUrl: url) { err, newerBlocks, in_continuationUrl in
+            peer.getNewerBlocks(fromUrl: url) { err, blocks, url in
                 if let err = err { return hasErr(err) }
                 
-                continuationUrl = in_continuationUrl
+                continuationUrl = url
 
-                go_on(newerBlocks)
+                go_on(blocks)
             }
         }
         
