@@ -38,7 +38,7 @@ class RedundantPeer: BlockchainDataSource {
     /** Create with an address
      */
     init?(withAddress: String) {
-        guard let url = URL(string: withAddress) else { return nil }
+        guard let url = URL(string: withAddress), url.scheme == "https" else { return nil }
         
         address = withAddress
         

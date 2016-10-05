@@ -16,9 +16,7 @@ class AddPeerViewController: NSViewController {
     /** Pressed add peer
     */
     @IBAction func addPeer(_ sender: NSButton) {
-        guard let address = peerAddress?.stringValue, let peer = RedundantPeer(withAddress: address) else {
-            return dismiss(sender, withError: AddPeerError.expectedPeerAddress)
-        }
+        guard let peer = _peerToAdd else { return dismiss(sender, withError: AddPeerError.expectedPeerAddress) }
         
         addPeerButton?.isEnabled = false
 
@@ -68,4 +66,23 @@ class AddPeerViewController: NSViewController {
     /** Add peer callback
     */
     var addPeer: ((RedundantPeer) -> ())?
+}
+
+// MARK: - NSTextFieldDelegate
+extension AddPeerViewController: NSTextFieldDelegate {
+    /** Peer to add on confirm
+    */
+    fileprivate var _peerToAdd: RedundantPeer? {
+        guard let address = peerAddress?.stringValue, let peer = RedundantPeer(withAddress: address) else {
+            return nil
+        }
+        
+        return peer
+    }
+
+    /** Text field changed value
+    */
+    override func controlTextDidChange(_ obj: Notification) {
+        addPeerButton?.isEnabled = _peerToAdd != nil
+    }
 }
