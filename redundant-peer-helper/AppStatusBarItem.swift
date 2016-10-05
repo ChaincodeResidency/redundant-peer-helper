@@ -63,6 +63,12 @@ class AppStatusBarItem: NSObject {
         _statusBarMenu = NSMenu()
         
         _statusBarItem.menu = _statusBarMenu
+        
+        _connectionsMenuItem = _statusBarMenu.addItem(
+            withTitle: "Determining number of network connections...",
+            action: nil,
+            keyEquivalent: String()
+        )
 
         _statusBarMenu.addItem(.separator())
         
@@ -130,14 +136,6 @@ extension AppStatusBarItem: NSMenuDelegate {
     */
     func menuNeedsUpdate(_ menu: NSMenu) {
         guard menu == _statusBarMenu else { return print("Expected status bar menu") }
-        
-        menu.removeAllItems()
-        
-        _connectionsMenuItem = _statusBarMenu.addItem(
-            withTitle: "Determining number of network connections...",
-            action: nil,
-            keyEquivalent: String()
-        )
 
         _updatePeerCount()
     }
