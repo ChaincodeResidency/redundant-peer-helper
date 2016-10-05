@@ -20,12 +20,36 @@ class AddPeerViewController: NSViewController {
             return dismiss(sender, withError: AddPeerError.expectedPeerAddress)
         }
         
-        addPeer?(peer)
+        addPeerButton?.isEnabled = false
 
-        dismiss(sender)
+        addPeerErrorTextField?.stringValue = String()
+        
+        RedundantPeerRefresh.importBlocks(fromUrl: nil, redundantPeer: peer) { [weak self] err, continuationUrl in
+            DispatchQueue.main.async {
+                self?.addPeerButton?.isEnabled = true
+
+                if let err = err {
+                    self?.addPeerErrorTextField?.stringValue = "Failed to add source, try again?"
+                    
+                    return log(err: err)
+                }
+                
+                self?.addPeer?(peer)
+                
+                self?.dismiss(sender)
+            }
+        }
     }
 
     // MARK: - @IBOutlets
+    
+    /** Add peer button
+    */
+    @IBOutlet weak var addPeerButton: NSButton?
+    
+    /** Add peer error text
+    */
+    @IBOutlet weak var addPeerErrorTextField: NSTextField?
     
     /** Peer address text entry field
     */

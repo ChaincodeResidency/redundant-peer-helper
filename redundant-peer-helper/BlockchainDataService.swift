@@ -10,7 +10,7 @@ import Foundation
 
 /** Service types
  */
-enum BlockchainDataService {
+enum BlockchainDataService: Equatable {
     // MARK: - Cases
     
     /** Identified Bitcoin Core node
@@ -19,7 +19,7 @@ enum BlockchainDataService {
     
     /** Bitcoin Knots node
      */
-    case bitcoinKnots(minorVersion: Int, patchVersion: Int)
+    case bitcoinKnots(minorVersion: Int, patchVersion: Int?)
     
     /** Redundant blockchain data service
      */
@@ -28,22 +28,6 @@ enum BlockchainDataService {
     /** Unknown Bitcoin network peer
      */
     case unidentifiedBitcoinNetworkPeer(agent: String)
-    
-    // MARK: - Computed Properties
-    
-    /** Determine if this source is from the Bitcoin Network
-    */
-    var isFromBitcoinNetwork: Bool {
-        switch self {
-        case .bitcoinCore(minorVersion: _, patchVersion: _),
-             .bitcoinKnots(minorVersion: _, patchVersion: _),
-             .unidentifiedBitcoinNetworkPeer(agent: _):
-            return true
-
-        case .redundantPeer:
-            return false
-        }
-    }
 
     // MARK: - Init
     
@@ -53,9 +37,21 @@ enum BlockchainDataService {
         switch fromUserAgentString {
         case "/Satoshi:0.8.6/":
             self = type(of: self).bitcoinCore(minorVersion: 8, patchVersion: 6)
+            
+        case "/Satoshi:0.9.1/":
+            self = type(of: self).bitcoinCore(minorVersion: 9, patchVersion: 1)
+            
+        case "/Satoshi:0.9.2/":
+            self = type(of: self).bitcoinCore(minorVersion: 9, patchVersion: 2)
 
         case "/Satoshi:0.9.4/":
             self = type(of: self).bitcoinCore(minorVersion: 9, patchVersion: 4)
+            
+        case "/Satoshi:0.10.0/":
+            self = type(of: self).bitcoinCore(minorVersion: 10, patchVersion: 0)
+            
+        case "/Satoshi:0.10.1/":
+            self = type(of: self).bitcoinCore(minorVersion: 10, patchVersion: 1)
             
         case "/Satoshi:0.10.2/":
             self = type(of: self).bitcoinCore(minorVersion: 10, patchVersion: 2)
@@ -69,7 +65,7 @@ enum BlockchainDataService {
         case "/Satoshi:0.11.1/":
             self = type(of: self).bitcoinCore(minorVersion: 11, patchVersion: 1)
             
-        case "/Satoshi:0.11.2/":
+        case "/Satoshi:0.11.2/", "/Satoshi:0.11.2(bitcore)/":
             self = type(of: self).bitcoinCore(minorVersion: 11, patchVersion: 2)
             
         case "/Satoshi:0.11.99/":
@@ -78,7 +74,7 @@ enum BlockchainDataService {
         case "/Satoshi:0.12.0/":
             self = type(of: self).bitcoinCore(minorVersion: 12, patchVersion: 0)
             
-        case "/Satoshi:0.12.1/":
+        case "/Satoshi:0.12.1/", "/Satoshi:0.12.1(bitcore)/":
             self = type(of: self).bitcoinCore(minorVersion: 12, patchVersion: 1)
             
         case "/Satoshi:0.12.1/Knots:20160629/":
@@ -96,5 +92,24 @@ enum BlockchainDataService {
         default:
             self = type(of: self).unidentifiedBitcoinNetworkPeer(agent: fromUserAgentString)
         }
+    }
+}
+
+/** Define equatability between services
+ */
+func ==(lhs: BlockchainDataService, rhs: BlockchainDataService) -> Bool {
+    switch (lhs, rhs) {
+    case (.bitcoinCore(let lhsMinorVer, let lhsPatchVer), .bitcoinCore(let rhsMinorVer, let rhsPatchVer)),
+         (.bitcoinKnots(let lhsMinorVer, let lhsPatchVer), .bitcoinKnots(let rhsMinorVer, let rhsPatchVer)):
+        return lhsMinorVer == rhsMinorVer && lhsPatchVer == rhsPatchVer
+
+    case (.redundantPeer, .redundantPeer):
+        return true
+        
+    case (.unidentifiedBitcoinNetworkPeer(let lhsAgent), .unidentifiedBitcoinNetworkPeer(let rhsAgent)):
+        return lhsAgent == rhsAgent
+        
+    default:
+        return false
     }
 }

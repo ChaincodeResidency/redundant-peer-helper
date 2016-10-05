@@ -8,10 +8,15 @@
 
 import Foundation
 
+enum BlockchainDataNetworkType {
+    case bitcoinNetwork, redundantPeer
+}
+
 /** Provider of blockchain data
  */
 protocol BlockchainDataSource {
     var address: String { get }
     var connectedSince: Date? { get }
+    var networkType: BlockchainDataNetworkType { get }
     var service: BlockchainDataService { get }
 }

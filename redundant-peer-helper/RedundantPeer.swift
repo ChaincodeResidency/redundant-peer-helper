@@ -21,6 +21,10 @@ class RedundantPeer: BlockchainDataSource {
      */
     let connectedSince: Date?
     
+    /** Network type
+    */
+    let networkType = BlockchainDataNetworkType.redundantPeer
+    
     /** Service type
      */
     let service: BlockchainDataService
@@ -45,8 +49,6 @@ class RedundantPeer: BlockchainDataSource {
         serviceUrl = url
     }
 }
-
-// MARK: - Errors
 
 // MARK: - Errors
 

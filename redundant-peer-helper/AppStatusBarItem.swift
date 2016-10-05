@@ -29,7 +29,7 @@ class AppStatusBarItem: NSObject {
 
     /** Connections menu item
     */
-    fileprivate let _connectionsMenuItem: NSMenuItem
+    fileprivate var _connectionsMenuItem: NSMenuItem?
     
     /** Menu item - needs to be retained here so that it stays around
     */
@@ -63,12 +63,6 @@ class AppStatusBarItem: NSObject {
         _statusBarMenu = NSMenu()
         
         _statusBarItem.menu = _statusBarMenu
-        
-        _connectionsMenuItem = _statusBarMenu.addItem(
-            withTitle: "Determining number of network connections...",
-            action: nil,
-            keyEquivalent: String()
-        )
 
         _statusBarMenu.addItem(.separator())
         
@@ -86,17 +80,28 @@ class AppStatusBarItem: NSObject {
     }
 }
 
+// MARK: - Error
+extension AppStatusBarItem {
+    /** Errors
+    */
+    enum AppStatusBarItemError: Error {
+        case expectedConnectionCount
+    }
+}
+
 // MARK: - NSMenuDelegate
 extension AppStatusBarItem: NSMenuDelegate {
-    private func _peerCountDisplayString(forCount: Int) -> String {
-        let template = "%@ connections to the Bitcoin network."
+    /** Nicely formatted string for a peer count display
+    */
+    private func _peerCountDisplayString(for count: Int) -> String {
+        let template = "Connected to %@ Blockchain data sources."
         
         let numberFormatter = NumberFormatter()
         
         numberFormatter.locale = .current
         numberFormatter.numberStyle = .none
         
-        let displayNumber = numberFormatter.string(from: NSNumber(value: forCount)) ?? String()
+        let displayNumber = numberFormatter.string(from: NSNumber(value: count)) ?? String()
         
         return NSString(format: NSLocalizedString(template, comment: String()) as NSString, displayNumber) as String
     }
@@ -104,15 +109,19 @@ extension AppStatusBarItem: NSMenuDelegate {
     /** Update the peer info item
     */
     private func _updatePeerCount() {
-        LocalCoreService.getPeerInfo { [weak self] peerInfoResponse in
-            switch peerInfoResponse {
-            case .encounteredError(let err):
-                log(err: err)
+        LocalCoreRequest(method: .getConnectionCount)?.execute { [weak self] err, count in
+            DispatchQueue.main.async {
+                if let err = err { return log(err: err) }
                 
-            case .receivedPeerInfo(let peerInfo):
-                guard let peerCount = self?._peerCountDisplayString(forCount: peerInfo.peers.count) else { break }
+                guard let bitcoinNetworkPeerCount = count as? Int else {
+                    return log(err: AppStatusBarItemError.expectedConnectionCount)
+                }
                 
-                self?._connectionsMenuItem.title = peerCount
+                let count = bitcoinNetworkPeerCount + Configuration.savedRedundantPeers.count
+                
+                guard let peerCount = self?._peerCountDisplayString(for: count) else { return }
+                
+                self?._connectionsMenuItem?.title = peerCount
             }
         }
     }
@@ -121,6 +130,14 @@ extension AppStatusBarItem: NSMenuDelegate {
     */
     func menuNeedsUpdate(_ menu: NSMenu) {
         guard menu == _statusBarMenu else { return print("Expected status bar menu") }
+        
+        menu.removeAllItems()
+        
+        _connectionsMenuItem = _statusBarMenu.addItem(
+            withTitle: "Determining number of network connections...",
+            action: nil,
+            keyEquivalent: String()
+        )
 
         _updatePeerCount()
     }

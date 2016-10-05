@@ -43,7 +43,9 @@ class PeersViewController: NSViewController {
             performSegue(withIdentifier: Segue.addSyncSource.asIdentifier, sender: self)
 
         case .removeSyncSource:
-            performSegue(withIdentifier: Segue.removeSyncSource.asIdentifier, sender: self)
+            guard let peer = _selectedPeer else { log(err: PeersViewError.expectedSelectedPeer); break }
+
+            _confirmRemoval(of: peer)
         }
     }
     
@@ -51,7 +53,7 @@ class PeersViewController: NSViewController {
     
     /** Blockchain data sources
      */
-    fileprivate var peers: [BlockchainDataSource]?
+    lazy fileprivate var peers: [BlockchainDataSource] = []
 }
 
 // MARK: - Adjust Peers
@@ -92,6 +94,7 @@ extension PeersViewController {
      */
     enum PeersViewError: Error {
         case expectedAddPeerViewController
+        case expectedBalancedTableUpdates
         case expectedClickedRow
         case expectedKnownColumn
         case expectedPeerForRow
@@ -108,6 +111,22 @@ extension PeersViewController {
 
 // MARK: - Navigation
 extension PeersViewController {
+    /** Segue to confirm the removal of a peer
+    */
+    fileprivate func _confirmRemoval(of peer: BlockchainDataSource) {
+        let segue: Segue
+        
+        switch peer.networkType {
+        case .redundantPeer:
+            segue = .removeRedundantPeer
+            
+        case .bitcoinNetwork:
+            segue = .removeBitcoinNetworkPeer
+        }
+        
+        performSegue(withIdentifier: segue.asIdentifier, sender: self)
+    }
+
     /** Prepare to segue to a new view controller
      */
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
@@ -129,7 +148,7 @@ extension PeersViewController {
                 self?.updatePeers()
             }
             
-        case .removeSyncSource:
+        case .removeBitcoinNetworkPeer, .removeRedundantPeer:
             guard let removePeerViewController = segue.destinationController as? RemovePeerViewController else {
                 log(err: PeersViewError.expectedRemovePeerViewController)
                 
@@ -142,33 +161,7 @@ extension PeersViewController {
                 break
             }
             
-            removePeerViewController.confirmPeerRemoval = { [weak self] peer in
-                switch peer.service.isFromBitcoinNetwork {
-                case false:
-                    guard let peer = RedundantPeer(withAddress: peer.address) else {
-                        log(err: PeersViewError.expectedRedundantPeerToRemove)
-                        
-                        break
-                    }
-                    
-                    Configuration.remove(savedRedundantPeer: peer)
-                    
-                    self?.updatePeers()
-                    
-                case true:
-                    guard let ipAddress = IpAddress(withUrlString: peer.address) else {
-                        log(err: PeersViewError.expectedPeerIp)
-                        
-                        break
-                    }
-                    
-                    LocalCoreRequest(method: .banPeer(withAddress: ipAddress, duration: nil))?.execute { err, _ in
-                        if let err = err { return log(err: err) }
-                        
-                        self?.updatePeers()
-                    }
-                }
-            }
+            removePeerViewController.confirmPeerRemoval = { [weak self] in self?._remove(peer: $0, ban: $1) }
             
             removePeerViewController.peer = peer
         }
@@ -183,7 +176,11 @@ extension PeersViewController {
         
         /** Segue to remove a sync source
          */
-        case removeSyncSource = "RemoveSyncSourceSegue"
+        case removeBitcoinNetworkPeer = "RemoveBitcoinNetworkPeerSegue"
+        
+        /** Segue to remove a redundant peer
+        */
+        case removeRedundantPeer = "RemoveRedundantPeerSegue"
         
         /** Create from storyboard segue
          */
@@ -201,10 +198,54 @@ extension PeersViewController {
 
 // MARK: - NSTableViewDataSource
 extension PeersViewController: NSTableViewDataSource {
+    /** Remove a peer
+    */
+    fileprivate func _remove(peer: BlockchainDataSource, ban: Bool) {
+        switch peer.networkType {
+        case .redundantPeer:
+            guard let peer = RedundantPeer(withAddress: peer.address) else {
+                log(err: PeersViewError.expectedRedundantPeerToRemove)
+                
+                break
+            }
+            
+            Configuration.remove(savedRedundantPeer: peer)
+            
+            tableView?.deselectAll(nil)
+            
+            updatePeers()
+            
+        case .bitcoinNetwork:
+            guard let ip = IpAddress(withUrlString: peer.address) else {
+                log(err: PeersViewError.expectedPeerIp)
+                
+                break
+            }
+            
+            let duration: TimeInterval? = ban ? LocalCoreService.longestBanInterval : nil
+            
+            LocalCoreRequest(method: .banPeer(withAddress: ip, duration: duration))?.execute { [weak self] err, _ in
+                DispatchQueue.main.async {
+                    if let err = err { return log(err: err) }
+                    
+                    self?.updatePeers()
+                }
+            }
+        }
+    }
+    
+    /** The selected peer
+     */
+    fileprivate var _selectedPeer: BlockchainDataSource? {
+        guard let selectedRow = tableView?.selectedRow, let peer = _peer(atRow: selectedRow) else { return nil }
+        
+        return peer
+    }
+
     /** Determine the number of rows in the table
      */
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return peers?.count ?? Int()
+        return peers.count
     }
     
     /** Table view selection changed
@@ -212,23 +253,98 @@ extension PeersViewController: NSTableViewDataSource {
     func tableViewSelectionDidChange(_ notification: Notification) {
         _updateAdjustPeersEnabled()
     }
+    
+    /** Peers sorted by their connection date
+    */
+    private static func _connectTimeSorted(peers: [BlockchainDataSource]) -> [BlockchainDataSource] {
+        return peers.sorted { $0.connectedSince ?? Date.distantPast < $1.connectedSince ?? Date.distantPast }
+    }
+    
+    /** Modify the peer table view
+    */
+    private func _modifyPeerList(withNewPeers newPeers: [LocalCoreService.PeerInfo.Peer]) {
+        let redundantPeers = Configuration.savedRedundantPeers as [BlockchainDataSource]
+        let startingPeers = peers
+        
+        let startingPeerAddresses = startingPeers.map { $0.address }
+        let finalPeers = type(of: self)._connectTimeSorted(peers: redundantPeers + newPeers as [BlockchainDataSource])
+        
+        let finalPeerAddresses = finalPeers.map { $0.address }
+        
+        tableView?.beginUpdates()
+        
+        // For peers in the starting set that aren't in the final set, trigger remove rows
+        let removes = Set(startingPeerAddresses)
+            .subtracting(Set(finalPeerAddresses))
+
+        // For peers in the final set that aren't in the starting set, trigger add rows
+        let inserts = Set(finalPeerAddresses)
+            .subtracting(Set(startingPeerAddresses))
+        
+        guard startingPeers.count - removes.count + inserts.count == finalPeers.count else {
+            return log(err: PeersViewError.expectedBalancedTableUpdates)
+        }
+        
+        var startingPeersByAddress = [String: BlockchainDataSource]()
+        var finalPeersByAddress = [String: BlockchainDataSource]()
+        
+        startingPeers.forEach { startingPeersByAddress[$0.address] = $0 }
+
+        finalPeers.forEach { finalPeersByAddress[$0.address] = $0 }
+
+        inserts
+            .map { finalPeerAddresses.index(of: $0) }
+            .flatMap { $0 }
+            .forEach { tableView?.insertRows(at: IndexSet(integer: $0), withAnimation: .slideDown) }
+
+        removes
+            .map { startingPeerAddresses.index(of: $0) }
+            .flatMap { $0 }
+            .forEach { tableView?.removeRows(at: IndexSet(integer: $0), withAnimation: .effectFade) }
+        
+        // Reload rows where the service has been updated
+        let updatedPeers = Set(startingPeerAddresses)
+            .subtracting(inserts)
+            .subtracting(removes)
+            .map { startingPeersByAddress[$0] }
+            .flatMap { $0 }
+            .filter { startingPeer in
+                guard let finalPeer = finalPeersByAddress[startingPeer.address] else { return false }
+                
+                guard startingPeer.service == finalPeer.service && startingPeer.address == finalPeer.address else {
+                    return false
+                }
+
+                return true
+            }
+
+        let columns = [PeersViewColumn.address, .network, .version]
+            .map { tableView?.column(withIdentifier: $0.asColumnIdentifier) }
+            .flatMap { $0 }
+        
+        let columnIndexes = IndexSet(integersIn: (columns.min() ?? Int())...(columns.max() ?? Int()))
+        
+        updatedPeers
+            .map { startingPeerAddresses.index(of: $0.address) }
+            .flatMap { $0 }
+            .map { return IndexSet(integer: $0) }
+            .forEach { tableView?.reloadData(forRowIndexes: $0, columnIndexes: columnIndexes) }
+        
+        peers = finalPeers
+
+        tableView?.endUpdates()
+    }
 
     /** Update visible peers list
      */
     func updatePeers() {
-        let redundantPeers = Configuration.savedRedundantPeers as [BlockchainDataSource]
-        
         LocalCoreService.getPeerInfo { [weak self] peerInfoResponse in
             switch peerInfoResponse {
             case .encounteredError(let err):
                 log(err: err)
                 
             case .receivedPeerInfo(let peerInfo):
-                self?.peers = (redundantPeers + peerInfo.peers as [BlockchainDataSource]).sorted { date1, date2 in
-                    return date1.connectedSince ?? Date.distantPast < date2.connectedSince ?? Date.distantPast
-                }
-                
-                self?.tableView?.reloadData()
+                self?._modifyPeerList(withNewPeers: peerInfo.peers)
             }
         }
     }
@@ -239,31 +355,26 @@ extension PeersViewController: NSTableViewDelegate {
     /** Get a peer for a row #
     */
     fileprivate func _peer(atRow row: Int) -> BlockchainDataSource? {
-        guard let peers = peers, row >= Int() && row < peers.count else { return nil }
+        guard row >= Int() && row < peers.count else { return nil }
         
         return peers[row]
     }
     
     /** Get service title for peer
      */
-    private func _serviceTitle(forPeer peer: BlockchainDataSource?) -> String {
-        guard let service = peer?.service else { return "Unknown" }
-
-        switch service {
+    private func _serviceTitle(forPeer peer: BlockchainDataSource) -> String {
+        switch peer.networkType {
         case .redundantPeer:
             return "Blockchain Data Service"
             
-        case _ where service.isFromBitcoinNetwork:
+        case .bitcoinNetwork:
             return "Bitcoin Network"
-            
-        default:
-            return "Unknown Connection"
         }
     }
 
     /** Table columns
     */
-    private enum PeersViewColumn: String {
+    fileprivate enum PeersViewColumn: String {
         case address = "SourceAddressColumn"
         case network = "SourceNetworkColumn"
         case version = "SourceVersionColumn"
@@ -293,6 +404,10 @@ extension PeersViewController: NSTableViewDelegate {
             }
         }
         
+        /** Column identifier
+        */
+        var asColumnIdentifier: String { return rawValue }
+        
         /** Make a cell in column
         */
         func makeCell(inTableView tableView: NSTableView, withTitle title: String) -> NSTableCellView? {
@@ -306,7 +421,7 @@ extension PeersViewController: NSTableViewDelegate {
 
     /** Determine a title for a cell
     */
-    private func _titleForCell(inColumn column: PeersViewColumn, peer: BlockchainDataSource) -> String {
+    fileprivate func _titleForCell(inColumn column: PeersViewColumn, peer: BlockchainDataSource) -> String {
         let title: String
         
         switch (column, peer.service) {
@@ -326,13 +441,19 @@ extension PeersViewController: NSTableViewDelegate {
             title = "Bitcoin Core (0." + String(minorVersion) + "." + String(patchVersion) + ")"
             
         case (.version, .bitcoinKnots(minorVersion: let minorVersion, patchVersion: let patchVersion)):
+            guard let patchVersion = patchVersion else {
+                title = "Bitcoin Knots (0." + String(minorVersion) + ")"
+                
+                break
+            }
+
             title = "Bitcoin Knots (0." + String(minorVersion) + "." + String(patchVersion) + ")"
             
         case (.version, .redundantPeer):
             title = "Redundant Peer Service"
 
-        case (.version, .unidentifiedBitcoinNetworkPeer(agent: let agent)) where agent.isEmpty:
-            title = "Unknown"
+        case (.version, .unidentifiedBitcoinNetworkPeer(let agent)) where agent.isEmpty:
+            title = "Connecting..."
             
         case (.version, .unidentifiedBitcoinNetworkPeer(agent: let agent)):
             title = "Unknown (" + agent + ")"
@@ -371,7 +492,9 @@ extension PeersViewController: NSMenuDelegate {
         
         tableView?.selectRowIndexes(IndexSet(integer: clickedPeerAtRow), byExtendingSelection: false)
         
-        performSegue(withIdentifier: Segue.removeSyncSource.asIdentifier, sender: self)
+        guard let peer = _selectedPeer else { return log(err: PeersViewError.expectedSelectedPeer) }
+        
+        _confirmRemoval(of: peer)
     }
 
     /** Context menu is appearing
@@ -397,7 +520,7 @@ extension PeersViewController {
         updatePeers()
         
         Timer.scheduledTimer(
-            timeInterval: 10, // FIXME: - reduce, abstract, temporarily set high due to row selection loss issue
+            timeInterval: 0.3,
             target: self,
             selector: #selector(updatePeers),
             userInfo: nil,

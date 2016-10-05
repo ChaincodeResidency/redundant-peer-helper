@@ -31,6 +31,10 @@ enum LocalCoreRpcMethod {
      */
     case getBlockHash(forHeight: Int)
     
+    /** Get the number of connected peers
+    */
+    case getConnectionCount
+    
     /** Pull an individual block
      */
     case getHexSerializedBlock(hash: BlockHash)
@@ -59,7 +63,10 @@ enum LocalCoreRpcMethod {
         case .estimateFee(let maxBlockCount):
             params = [NSNumber(value: maxBlockCount)]
             
-        case .getBestBlockHash, .getBlockchainInfo, .getPeerInfo:
+        case .getBestBlockHash,
+             .getBlockchainInfo,
+             .getConnectionCount,
+             .getPeerInfo:
             params = []
             
         case .getBlockHash(forHeight: let height):
@@ -94,10 +101,13 @@ enum LocalCoreRpcMethod {
         case .getBlockchainInfo:
             return "getblockchaininfo"
             
-        case .getBlockHash(forHeight: _):
+        case .getBlockHash( _):
             return "getblockhash"
             
-        case .getHexSerializedBlock(hash: _):
+        case .getConnectionCount:
+            return "getconnectioncount"
+            
+        case .getHexSerializedBlock( _):
             return "getblock"
             
         case .getMempoolTransactions:
@@ -106,7 +116,7 @@ enum LocalCoreRpcMethod {
         case .getPeerInfo:
             return "getpeerinfo"
             
-        case .importBlock(hexSerializedBlock: _):
+        case .importBlock( _):
             return "submitblock"
         }
     }

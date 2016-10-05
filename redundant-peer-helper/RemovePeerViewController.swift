@@ -28,12 +28,16 @@ class RemovePeerViewController: NSViewController {
     @IBAction func removePeer(_ sender: NSButton) {
         guard let peer = peer else { return dismiss(sender, withError: RemovePeerError.expectedPeer) }
         
-        confirmPeerRemoval?(peer)
+        confirmPeerRemoval?(peer, avoidReconnectingButton?.state == NSOnState)
         
         dismiss(sender)
     }
     
     // MARK: - @IBOutlets
+    
+    /** Ban peer for a long time
+    */
+    @IBOutlet weak var avoidReconnectingButton: NSButton?
     
     /** Title label
     */
@@ -42,10 +46,8 @@ class RemovePeerViewController: NSViewController {
     // MARK: - Properties (View Controller Configuration)
     
     /** Confirm removal
-     
-        FIXME: - this should be contextual with the "ban" checkbox
     */
-    var confirmPeerRemoval: ((BlockchainDataSource) -> ())?
+    var confirmPeerRemoval: ((_ peer: BlockchainDataSource, _ banForever: Bool) -> ())?
     
     /** Peer to remove
     */
@@ -72,6 +74,6 @@ class RemovePeerViewController: NSViewController {
         let closeQuote = (locale.object(forKey: NSLocale.Key.quotationEndDelimiterKey) as? String) ?? "\""
         let openQuote = (locale.object(forKey: NSLocale.Key.quotationBeginDelimiterKey) as? String) ?? "\""
 
-        titleTextField?.stringValue = "Remove Blockchain sync source " + openQuote + peerTitle + closeQuote + "?"
+        titleTextField?.stringValue = "Remove " + openQuote + peerTitle + closeQuote + "?"
     }
 }

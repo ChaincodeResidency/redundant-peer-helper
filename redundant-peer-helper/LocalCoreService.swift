@@ -12,23 +12,11 @@ import Foundation
 
 /** Local Core Service
  */
-struct LocalCoreService {
-    // MARK: - Errors
-    
-    /** Core Service Errors
-    */
-    enum CoreServiceError: Error {
-        case malformedResponse
-    }
-    
-    // MARK: - Request Results
-    
-    /** Core Service Request Results
-    */
-    enum ServiceResult {
-        case encounteredError(Error)
-        case completedSuccessfully
-    }
+struct LocalCoreService {}
+
+// MARK: - Banning
+extension LocalCoreService {
+    static let longestBanInterval: TimeInterval = 365 * 24 * 60 * 60
 }
 
 // MARK: - Consume blocks
@@ -57,6 +45,15 @@ extension LocalCoreService {
         queue.run {
             cbk(.completedSuccessfully)
         }
+    }
+}
+
+// MARK: - Errors
+extension LocalCoreService {
+    /** Core Service Errors
+     */
+    enum CoreServiceError: Error {
+        case malformedResponse
     }
 }
 
@@ -122,6 +119,10 @@ extension LocalCoreService {
             */
             let connectedSince: Date?
             
+            /** Network type
+            */
+            let networkType = BlockchainDataNetworkType.bitcoinNetwork
+            
             /** Service type
             */
             let service: BlockchainDataService
@@ -129,7 +130,9 @@ extension LocalCoreService {
             /** Create from JSON data
             */
             init(fromJson: [String: Any]?) {
-                service = BlockchainDataService(fromUserAgentString: fromJson?["subver"] as? String ?? String())
+                let subver = fromJson?["subver"] as? String ?? String()
+                
+                service = BlockchainDataService(fromUserAgentString: subver)
 
                 address = "bitcoin://" + (fromJson?["addr"] as? String ?? "unknown")
                 
@@ -175,5 +178,15 @@ extension LocalCoreService {
                 return cbk(PeerInfoResponse.receivedPeerInfo(peerInfo))
             }
         }
+    }
+}
+
+// MARK: - Request Results
+extension LocalCoreService {
+    /** Core Service Request Results
+     */
+    enum ServiceResult {
+        case encounteredError(Error)
+        case completedSuccessfully
     }
 }
