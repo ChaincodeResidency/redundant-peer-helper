@@ -5,7 +5,6 @@
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="box content view" minToolsVersion="7.0"/>
-        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -685,17 +684,17 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="PeersViewController" customModule="redundant_peer_helper" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="598" height="373"/>
+                        <rect key="frame" x="0.0" y="0.0" width="598" height="366"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box translatesAutoresizingMaskIntoConstraints="NO" id="Ocz-Bp-w9f">
-                                <rect key="frame" x="17" y="16" width="564" height="316"/>
+                                <rect key="frame" x="17" y="16" width="564" height="309"/>
                                 <view key="contentView" id="hsi-yt-Io3">
-                                    <rect key="frame" x="2" y="2" width="560" height="299"/>
+                                    <rect key="frame" x="2" y="2" width="560" height="292"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bmk-VS-1II">
-                                            <rect key="frame" x="20" y="270" width="524" height="17"/>
+                                            <rect key="frame" x="20" y="263" width="524" height="17"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Blockchain sources:" id="p08-z5-rwA">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -703,13 +702,13 @@
                                             </textFieldCell>
                                         </textField>
                                         <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lbl-ML-0iu">
-                                            <rect key="frame" x="22" y="37" width="520" height="225"/>
+                                            <rect key="frame" x="22" y="37" width="520" height="218"/>
                                             <clipView key="contentView" id="AQP-zX-XTX">
-                                                <rect key="frame" x="1" y="0.0" width="518" height="224"/>
+                                                <rect key="frame" x="1" y="0.0" width="518" height="217"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="vdz-QI-UD4" viewBased="YES" id="2vd-Oa-UUt">
-                                                        <rect key="frame" x="0.0" y="0.0" width="518" height="201"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="518" height="194"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -863,9 +862,9 @@
                                 </view>
                             </box>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RB1-9G-Vmf">
-                                <rect key="frame" x="18" y="332" width="108" height="21"/>
+                                <rect key="frame" x="18" y="325" width="104" height="21"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Bitcoin Core" id="iPg-JY-ovq">
-                                    <font key="font" metaFont="systemBlack" size="17"/>
+                                    <font key="font" metaFont="systemBold" size="17"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -891,7 +890,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="134" y="706.5"/>
+            <point key="canvasLocation" x="75" y="708"/>
         </scene>
         <!--Add Peer View Controller-->
         <scene sceneID="PB4-zm-yOe">
@@ -1015,7 +1014,7 @@ DQ
                 </viewController>
                 <customObject id="ECM-4m-iG5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-203" y="1113"/>
+            <point key="canvasLocation" x="-397" y="1151"/>
         </scene>
         <!--Remove Peer View Controller-->
         <scene sceneID="La3-np-Tq5">
@@ -1109,7 +1108,7 @@ DQ
                 </viewController>
                 <customObject id="pyd-rt-GsB" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="304" y="1108.5"/>
+            <point key="canvasLocation" x="75" y="1147"/>
         </scene>
         <!--Remove Peer View Controller-->
         <scene sceneID="yyy-S8-v41">
@@ -1192,7 +1191,7 @@ DQ
                 </viewController>
                 <customObject id="vSN-3m-kNa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="776" y="1109"/>
+            <point key="canvasLocation" x="556" y="1128"/>
         </scene>
     </scenes>
     <resources>

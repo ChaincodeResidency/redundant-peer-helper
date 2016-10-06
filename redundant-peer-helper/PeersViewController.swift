@@ -201,8 +201,8 @@ extension PeersViewController: NSTableViewDataSource {
     /** Remove a peer
     */
     fileprivate func _remove(peer: BlockchainDataSource, ban: Bool) {
-        switch peer.networkType {
-        case .redundantPeer:
+        switch (peer.networkType, ban) {
+        case (.redundantPeer, _):
             guard let peer = RedundantPeer(withAddress: peer.address) else {
                 log(err: PeersViewError.expectedRedundantPeerToRemove)
                 
@@ -215,14 +215,29 @@ extension PeersViewController: NSTableViewDataSource {
             
             updatePeers()
             
-        case .bitcoinNetwork:
+        case (.bitcoinNetwork, false):
+            guard let ip = IpAddress(withUrlString: peer.address), let port = URL(string: peer.address)?.port else {
+                log(err: PeersViewError.expectedPeerIp)
+                
+                break
+            }
+            
+            LocalCoreRequest(method: .disconnectPeer(withAddress: ip, port: port))?.execute { [weak self] err, _ in
+                DispatchQueue.main.async {
+                    if let err = err { return log(err: err) }
+                    
+                    self?.updatePeers()
+                }
+            }
+            
+        case (.bitcoinNetwork, true):
             guard let ip = IpAddress(withUrlString: peer.address) else {
                 log(err: PeersViewError.expectedPeerIp)
                 
                 break
             }
             
-            let duration: TimeInterval? = ban ? LocalCoreService.longestBanInterval : nil
+            let duration = LocalCoreService.longestBanInterval
             
             LocalCoreRequest(method: .banPeer(withAddress: ip, duration: duration))?.execute { [weak self] err, _ in
                 DispatchQueue.main.async {
@@ -271,6 +286,8 @@ extension PeersViewController: NSTableViewDataSource {
         
         let finalPeerAddresses = finalPeers.map { $0.address }
         
+        guard let startingRowCount = tableView?.numberOfRows else { return }
+        
         tableView?.beginUpdates()
         
         // For peers in the starting set that aren't in the final set, trigger remove rows
@@ -281,7 +298,7 @@ extension PeersViewController: NSTableViewDataSource {
         let inserts = Set(finalPeerAddresses)
             .subtracting(Set(startingPeerAddresses))
         
-        guard startingPeers.count - removes.count + inserts.count == finalPeers.count else {
+        guard startingRowCount - removes.count + inserts.count == finalPeers.count else {
             return log(err: PeersViewError.expectedBalancedTableUpdates)
         }
         
@@ -344,7 +361,7 @@ extension PeersViewController: NSTableViewDataSource {
                 log(err: err)
                 
             case .receivedPeerInfo(let peerInfo):
-                self?._modifyPeerList(withNewPeers: peerInfo.peers)
+                DispatchQueue.main.async { self?._modifyPeerList(withNewPeers: peerInfo.peers) }
             }
         }
     }

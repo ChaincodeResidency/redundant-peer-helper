@@ -15,6 +15,10 @@ enum LocalCoreRpcMethod {
     */
     case banPeer(withAddress: IpAddress, duration: TimeInterval?)
     
+    /** Disconnect a peer
+    */
+    case disconnectPeer(withAddress: IpAddress, port: Int)
+    
     /** Determine a fee given max blocks to wait
      */
     case estimateFee(givenMaxBlocksToWait: Int)
@@ -60,6 +64,9 @@ enum LocalCoreRpcMethod {
         case .banPeer(withAddress: let address, duration: let duration):
             params = [address.stringValue as NSString, "add" as NSString, NSNumber(value: duration ?? Double())]
             
+        case .disconnectPeer(withAddress: let address, port: let port):
+            params = [(address.stringValue + ":" + String(port)) as NSString]
+            
         case .estimateFee(let maxBlockCount):
             params = [NSNumber(value: maxBlockCount)]
             
@@ -91,6 +98,9 @@ enum LocalCoreRpcMethod {
         switch self {
         case .banPeer( _, _):
             return "setban"
+            
+        case .disconnectPeer(_, _):
+            return "disconnectnode"
             
         case .estimateFee( _):
             return "estimatefee"

@@ -168,15 +168,13 @@ extension LocalCoreService {
     */
     static func getPeerInfo(cbk: @escaping (PeerInfoResponse) -> ()) {
         LocalCoreRequest(method: .getPeerInfo)?.execute() { err, peerData in
-            DispatchQueue.main.async {
-                if let err = err { return cbk(PeerInfoResponse.encounteredError(err)) }
-                
-                guard let peerInfo = PeerInfo(fromJsonArray: peerData as? NSArray) else {
-                    return cbk(PeerInfoResponse.encounteredError(CoreServiceError.malformedResponse))
-                }
-                
-                return cbk(PeerInfoResponse.receivedPeerInfo(peerInfo))
+            if let err = err { return cbk(PeerInfoResponse.encounteredError(err)) }
+            
+            guard let peerInfo = PeerInfo(fromJsonArray: peerData as? NSArray) else {
+                return cbk(PeerInfoResponse.encounteredError(CoreServiceError.malformedResponse))
             }
+            
+            return cbk(PeerInfoResponse.receivedPeerInfo(peerInfo))
         }
     }
 }
