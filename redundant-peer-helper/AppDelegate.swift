@@ -41,4 +41,12 @@ extension AppDelegate: AppStatusBarItemDelegate {
     func appStatusBarRequestedApplicationExit() {
         NSApplication.shared().terminate(self)
     }
+    
+    /** Show the peers view
+    */
+    func appStatusBarRequestedShowPeers() {
+        DispatchQueue.main.async {
+            NSApplication.shared().windows.first?.makeKeyAndOrderFront(nil)
+        }
+    }
 }

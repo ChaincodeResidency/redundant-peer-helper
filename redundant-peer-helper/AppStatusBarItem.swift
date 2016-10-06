@@ -14,6 +14,10 @@ protocol AppStatusBarItemDelegate {
     /** Pressed exit button
     */
     func appStatusBarRequestedApplicationExit()
+    
+    /** Pressed show peers button
+    */
+    func appStatusBarRequestedShowPeers()
 }
 
 /** Status bar item for the App
@@ -50,6 +54,10 @@ class AppStatusBarItem: NSObject {
     func exitApplication(_ sender: NSMenuItem) {
         delegate?.appStatusBarRequestedApplicationExit()
     }
+    
+    func showPeers(_ sender: NSMenuItem) {
+        delegate?.appStatusBarRequestedShowPeers()
+    }
 
     // MARK: - Init
     
@@ -66,7 +74,7 @@ class AppStatusBarItem: NSObject {
         
         _connectionsMenuItem = _statusBarMenu.addItem(
             withTitle: "Determining number of network connections...",
-            action: nil,
+            action: #selector(showPeers(_:)),
             keyEquivalent: String()
         )
 
@@ -82,7 +90,7 @@ class AppStatusBarItem: NSObject {
         
         _statusBarMenu.delegate = self
         
-        quitItem.target = self
+        [_connectionsMenuItem, quitItem].forEach { $0?.target = self }
     }
 }
 
